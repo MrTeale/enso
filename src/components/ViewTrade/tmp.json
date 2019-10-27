@@ -1,0 +1,48 @@
+{
+  "currentUnits": "100000",
+  "dividend": "0.0000",
+  "financing": "0.0000",
+  "id": "284",
+  "initialMarginRequired": "1627.1700",
+  "initialUnits": "100000",
+  "instrument": "EUR_GBP",
+  "marginUsed": "1629.2500",
+  "openTime": "2019-10-24T05:48:17.258385604Z",
+  "pips": 13.200000000000989,
+  "price": "0.86218",
+  "realizedPL": "0.0000",
+  "state": "OPEN",
+  "stopLossOrder": {
+    "createTime": "2019-10-24T09:45:45.803822460Z",
+    "guaranteed": false,
+    "id": "286",
+    "price": "0.85788",
+    "state": "PENDING",
+    "timeInForce": "GTC",
+    "tradeID": "284",
+    "triggerCondition": "DEFAULT",
+    "type": "STOP_LOSS"
+  },
+  "takeProfitOrder": {
+    "createTime": "2019-10-24T09:45:45.803822460Z",
+    "id": "285",
+    "price": "0.86738",
+    "state": "PENDING",
+    "timeInForce": "GTC",
+    "tradeID": "284",
+    "triggerCondition": "DEFAULT",
+    "type": "TAKE_PROFIT"
+  },
+  "trailingStopLossOrder": {
+    "createTime": "2019-10-24T09:45:45.803822460Z",
+    "distance": "0.00300",
+    "id": "287",
+    "state": "PENDING",
+    "timeInForce": "GTC",
+    "tradeID": "284",
+    "trailingStopValue": "0.86053",
+    "triggerCondition": "DEFAULT",
+    "type": "TRAILING_STOP_LOSS"
+  },
+  "unrealizedPL": "249.0048"
+}

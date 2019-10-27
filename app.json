@@ -1,0 +1,10 @@
+{
+  "name": "enso",
+  "displayName": "enso",
+  "expo": {
+    "name": "enso",
+    "slug": "enso",
+    "sdkVersion": "25.0.0 or corresponding version",
+    "privacy": "public"
+  }
+}
