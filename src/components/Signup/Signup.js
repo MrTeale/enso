@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
-import { Text, View, Image, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { Text, View, Image, TouchableOpacity, KeyboardAvoidingView, Alert } from 'react-native';
 import FloatingLabelInput from '../floatingInput';
-import Amplify, { Auth } from 'aws-amplify';
-import awsConfig from '../../aws-exports';
+import Auth0 from 'react-native-auth0';
 
-Amplify.configure(awsConfig);
 const styles = require('./SignUpStyles');
+var credentials = require('../../auth0-credentials');
+const auth0 = new Auth0(credentials);
 
 export default class SignUp extends Component {
     constructor() {
@@ -17,18 +17,31 @@ export default class SignUp extends Component {
         };
         this.handleSignUp = this.handleSignUp.bind(this);
     }
-
+    
+    alert(title, message) {
+        Alert.alert(
+            title,
+            message,
+            [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
+            { cancelable: false }
+        );
+    }
 
     handleSignUp = () => {
-        Auth.signUp({
-            username: this.state.username,
-            password: this.state.password,
-            attributes: {
-                email: this.state.email
-            }
-        })
-            .then(data => this.props.navigation.navigate('Confirmation', {username: this.state.username}))
-            .catch(err => console.log(err));
+        auth0.auth
+            .createUser({
+                email: this.state.email,
+                password: this.state.password,
+                username: this.state.username,
+                connection: 'Username-Password-Authentication',
+            })
+            .then(success => {
+                console.log(success)
+                this.alert('Success', 'New user created')
+            })
+            .catch(error => { 
+                Alert.alert('Error', error.json.description) 
+            });
     }
 
 

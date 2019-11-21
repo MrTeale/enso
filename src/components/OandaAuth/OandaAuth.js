@@ -1,18 +1,17 @@
 
 
 import React, { Component } from 'react';
-import { Text, View, Image, TouchableOpacity, KeyboardAvoidingView} from 'react-native';
-import Amplify, { API, graphqlOperation } from 'aws-amplify';
-import awsConfig from '../../aws-exports';
-import AWSAppSyncClient from "aws-appsync";
+import { Text, View, Image, TouchableOpacity, KeyboardAvoidingView, Alert} from 'react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import FloatingLabelInput from '../floatingInput';
+import Auth0 from 'react-native-auth0';
 
-Amplify.configure(awsConfig);
-const styles = require('./OandaAuthStyles.js');
+const styles = require('./OandaAuthStyles');
+
+var credentials = require('../../auth0-credentials');
+const auth0 = new Auth0(credentials);
 
 export default class OandaAuth extends Component {
-
     constructor() {
         super();
         this.state = {
@@ -21,25 +20,30 @@ export default class OandaAuth extends Component {
         };
     }
 
-    handleAPIKey = () => {
-        const mutation = `
-            mutation createEnsoUsers($createensousersinput: CreateEnsoUsersInput!) {
-                createEnsoUsers(input: $createensousersinput) {
-                    id
-                    oandaAPIKey
-                    username
-                }
-            }
-        `
+    alert(title, message) {
+        Alert.alert(
+            title,
+            message,
+            [{ text: 'OK', onPress: () => console.log('OK Pressed') }],
+            { cancelable: false }
+        );
+    }
 
-        inputs = {
-            oandaAPIKey: JSON.stringify(this.state.oandaAPIKey),
-            username: JSON.stringify(this.state.username)
-        };
-
-        API.graphql(graphqlOperation(mutation, { input: inputs }));
-        AsyncStorage.setItem('OANDA_API_KEY', this.state.oandaAPIKey);
-        this.props.navigation.navigate('Home');
+    handleAPIKey = async () => {
+        const USER_ID = await AsyncStorage.getItem('USER_ID');
+        const ACCESS_TOKEN = await AsyncStorage.getItem('ACCESS_TOKEN');
+        console.log(USER_ID)
+        console.log(ACCESS_TOKEN)
+        auth0.users(ACCESS_TOKEN)
+            .patchUser({id: USER_ID, metadata: {"oandaApiKey": this.state.oandaAPIKey}})
+            .then(success => {
+                AsyncStorage.setItem('OANDA_API_KEY', this.state.oandaAPIKey);    
+                this.props.navigation.navigate('App');
+            })
+            .catch(error => { 
+                console.log(error)
+                this.alert('Error', error.json.description) 
+            });
     }
 
     componentDidMount() {
@@ -57,8 +61,8 @@ export default class OandaAuth extends Component {
                     <Text style={styles.headerText}>OANDA</Text>
                     <Text style={styles.headerText}>API Key</Text>
 
-                    <Text style={styles.bodyText}>An email will arrive shortly with a designated code.</Text>
-                    <Text style={styles.bodyText}>Please enter this code below</Text>
+                    <Text style={styles.bodyText}>Your OANDA API Key will be needed for this application to function</Text>
+                    <Text style={styles.bodyText}>Please enter your key below</Text>
                 </View>
                 <View style={styles.forms}>
                     <View style={styles.inputs}>
